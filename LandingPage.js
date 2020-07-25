@@ -1,10 +1,21 @@
 import 'react-native-gesture-handler';
+
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {connect} from 'react-redux';
+import {setUserAction} from './redux/actions/userActions';
 
 class LandingPage extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {username: ''};
   }
 
   openSecondPage = () => {
@@ -13,11 +24,26 @@ class LandingPage extends React.Component {
   };
 
   render() {
+    const {setUser} = this.props;
+    const {username} = this.state;
     return (
       <>
         <View style={styles.container}>
           <TouchableOpacity onPress={this.openSecondPage}>
-            <Text>Landing Page</Text>
+            <Text>Go to Second Page</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.openSecondPage}>
+            <TextInput
+              style={{textAlign: 'center'}}
+              placeholder="Enter username"
+              onChangeText={value => {
+                this.setState({username: value});
+              }}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setUser(username)}>
+            <Text>Log In</Text>
           </TouchableOpacity>
         </View>
       </>
@@ -28,9 +54,26 @@ class LandingPage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
 });
 
-export default LandingPage;
+const mapStateToProps = state => {
+  return {
+    user: state.user,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setUser: username => {
+      dispatch(setUserAction(username));
+    },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(LandingPage);
